@@ -1,0 +1,23 @@
+[Unit]
+Description=Shopify Checker API (sh-checker-api)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/sh-checker-api
+EnvironmentFile=/opt/sh-checker-api/.env
+ExecStart=/opt/sh-checker-api/venv/bin/gunicorn server:app \
+    --workers ${WORKERS:-4} \
+    --timeout 120 \
+    --bind 0.0.0.0:${PORT:-5002} \
+    --access-logfile /var/log/sh-checker-api/access.log \
+    --error-logfile /var/log/sh-checker-api/error.log \
+    --log-level info
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
